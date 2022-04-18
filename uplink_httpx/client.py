@@ -30,14 +30,6 @@ class HttpxClient(interfaces.HttpClientAdapter):
         self._session = session or httpx.AsyncClient(verify=ssl_context if verify else False, **kwargs)
         self._sync_callback_adapter = threaded_callback
 
-    def __del__(self):
-        log.debug("HttpxClient: __del__")
-        try:
-            if not self._session.is_closed:
-                asyncio.create_task(self._session.aclose())
-        except RuntimeError:
-            pass
-
     async def __aenter__(self):
         log.debug("HttpxClient: __aenter__")
         await self._session.__aenter__()
